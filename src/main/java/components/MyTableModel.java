@@ -4,12 +4,12 @@ import javax.swing.table.AbstractTableModel;
 
 class MyTableModel extends AbstractTableModel {
     private final TableFilterDemo tableFilterDemo;
-    private String[] columnNames = {"First Name",
+    public String[] columnNames = {"First Name",
             "Last Name",
             "Sport",
             "# of Years",
             "Vegetarian"};
-    private Object[][] data = {
+    public Object[][] data = {
             {"Kathy", "Smith",
                     "Snowboarding", 5, false},
             {"John", "Doe",

@@ -20,7 +20,8 @@ public class TableFilterDemo extends JPanel{
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         //Create a table with a sorter.
-        DefaultTableModel model = new DefaultTableModel();
+        MyTableModel n = new MyTableModel(this);
+        DefaultTableModel model = new DefaultTableModel(n.data, n.columnNames);
         sorter = new TableRowSorter<DefaultTableModel>(model);
         table = new JTable(model);
         table.setRowSorter(sorter);
