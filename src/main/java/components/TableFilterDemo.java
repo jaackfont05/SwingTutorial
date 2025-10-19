@@ -128,6 +128,7 @@ public class TableFilterDemo extends JPanel{
                     @Override
                     public void run() {
                         MyDialog dialog = new MyDialog(table);
+                        dialog.setVisible(true);
                     }
                 });
             }
