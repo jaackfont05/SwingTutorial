@@ -4,12 +4,15 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.util.Vector;
+import net.coderazzi.filters.gui.TableFilterHeader;
+import net.coderazzi.filters.gui.AutoChoices;
 
 public class TableFilterDemo extends JPanel{
     public Boolean DEBUG = false;
@@ -24,7 +27,21 @@ public class TableFilterDemo extends JPanel{
 
         //Create a table with a sorter.
         MyTableModel n = new MyTableModel(this);
-        DefaultTableModel model = new DefaultTableModel(n.data, n.columnNames);
+        //task 6
+        final Class<?>[] columnClass = new Class[]{
+                String.class, String.class, String.class, String.class, Boolean.class
+        };
+        DefaultTableModel model = new DefaultTableModel(n.data, n.columnNames){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnClass[columnIndex];
+            }
+        };
         sorter = new TableRowSorter<DefaultTableModel>(model);
         table = new JTable(model);
         table.setRowSorter(sorter);
@@ -102,6 +119,33 @@ public class TableFilterDemo extends JPanel{
         add(button);
         SpringUtilities.makeCompactGrid(form, 2, 2, 6, 6, 6, 6);
         add(form);
+
+        JButton dialogButton = new JButton("Dialog");
+        dialogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyDialog dialog = new MyDialog(table);
+                    }
+                });
+            }
+        });
+        add(dialogButton);
+
+        //task 5
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        DeleteRowFromTableAction deleteAction = new DeleteRowFromTableAction(table, (DefaultTableModel) table.getModel());
+        JToolBar toolBar = new JToolBar();
+        Box floatRightBox = Box.createHorizontalBox();
+        floatRightBox.add(Box.createHorizontalGlue());
+        toolBar.add(deleteAction);
+        floatRightBox.add(toolBar);
+        add(floatRightBox);
+
+        //task 7
+        TableFilterHeader filterHeader = new TableFilterHeader(table, AutoChoices.ENABLED);
 
     }
 
@@ -193,12 +237,22 @@ public class TableFilterDemo extends JPanel{
        menuCSV.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {
+               DefaultTableModel model = (DefaultTableModel) table.getModel();
+               model.setRowCount(0);
                try(BufferedReader br = new BufferedReader(
                        new FileReader(new File(this.getClass().getResource("/data.csv").getFile()))
                )){
                    String line;
                    while((line = br.readLine()) != null){
-                       System.out.println(line);
+                       //System.out.println(line);
+                       String[] row = (line.split(","));
+                       Vector<Object> correction = new Vector<>();
+                       for(int i = 0; i < 3; i++){
+                           correction.add(row[i]);
+                       }
+                       correction.add(Integer.parseInt(row[3]));
+                       correction.add(Boolean.parseBoolean(row[4]));
+                       model.addRow(correction);
                    }
                }catch(FileNotFoundException ex){
                    JOptionPane.showMessageDialog(null, "Issue with loading file: " + ex.getMessage());
@@ -233,3 +287,5 @@ public class TableFilterDemo extends JPanel{
         }
     }
 }
+
+
