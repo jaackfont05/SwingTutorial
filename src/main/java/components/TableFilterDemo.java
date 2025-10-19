@@ -7,6 +7,9 @@ import javax.swing.table.TableRowSorter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
 
 public class TableFilterDemo extends JPanel{
     public Boolean DEBUG = false;
@@ -27,6 +30,13 @@ public class TableFilterDemo extends JPanel{
         table.setRowSorter(sorter);
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
+
+        //task 2
+        //add(initMenu());
+        Box b1 = Box.createHorizontalBox();
+        b1.add(initMenu());
+        b1.add(Box.createHorizontalGlue());
+        add(b1);
 
         //For the purposes of this example, better to have a single
         //selection.
@@ -87,15 +97,8 @@ public class TableFilterDemo extends JPanel{
         form.add(statusText);
         //task 1
         JButton button = new JButton("Remove");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                int selectedRow = table.getSelectedRow();
-                if(selectedRow != -1){
-                    model.removeRow(selectedRow);
-                }
-            }
-        });
+        button.addActionListener(new RemoveLineActionLister());
+
         add(button);
         SpringUtilities.makeCompactGrid(form, 2, 2, 6, 6, 6, 6);
         add(form);
@@ -146,5 +149,87 @@ public class TableFilterDemo extends JPanel{
                 createAndShowGUI();
             }
         });
+    }
+
+    private JMenuBar initMenu() {
+       JMenuBar menuBar;
+       JMenu menu;
+       JMenuItem header, menuItem;
+       JMenuItem menuCSV = new  JMenuItem("Load CSV");
+
+       menuBar = new JMenuBar();
+       menu = new JMenu("Menu");
+       menuBar.add(menu);
+
+       header = new JMenuItem("COMMANDS:");
+       header.setEnabled(false);
+       menu.add(header);
+
+       menuItem = new JMenuItem("Remove");
+       menuItem.addActionListener(null);
+       menu.add(menuItem);
+       menu.addSeparator();
+       //minitask2
+        menu.addMenuListener(new MenuListener() {
+            public void menuSelected(MenuEvent e) {
+                int viewRow = table.getSelectedRow();
+                if (viewRow < 0) {
+                    menu.setEnabled(false);
+                }else{
+                    menu.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {}
+
+            @Override
+            public void menuCanceled(MenuEvent e) {}
+        });
+
+       menuItem.addActionListener(new RemoveLineActionLister());
+
+       menu.add(menuCSV);
+       menuCSV.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               try(BufferedReader br = new BufferedReader(
+                       new FileReader(new File(this.getClass().getResource("/data.csv").getFile()))
+               )){
+                   String line;
+                   while((line = br.readLine()) != null){
+                       System.out.println(line);
+                   }
+               }catch(FileNotFoundException ex){
+                   JOptionPane.showMessageDialog(null, "Issue with loading file: " + ex.getMessage());
+               }catch(IOException ex){
+                   JOptionPane.showMessageDialog(null, "Issue with loading file: " + ex.getMessage());
+                   ex.printStackTrace();
+               }
+           }
+       });
+
+        return menuBar;
+    }
+
+    private final class RemoveLineActionLister implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e){
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow < 0) {
+                JOptionPane.showMessageDialog(null, "No row selected!");
+            }
+            else{
+                int modelRow = table.convertRowIndexToModel(selectedRow);
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+                int answer = JOptionPane.showConfirmDialog(null, "Do you want to remove " +
+                        model.getValueAt(modelRow, 0) + " "+ model.getValueAt(modelRow, 1)+"?", "Warning",
+                        JOptionPane.YES_NO_OPTION);
+                if (answer == 0){
+                    model.removeRow(modelRow);
+                }
+            }
+        }
     }
 }
