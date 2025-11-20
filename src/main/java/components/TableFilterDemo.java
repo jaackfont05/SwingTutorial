@@ -29,7 +29,7 @@ public class TableFilterDemo extends JPanel{
         MyTableModel n = new MyTableModel(this);
         //task 6
         final Class<?>[] columnClass = new Class[]{
-                String.class, String.class, String.class, String.class, Boolean.class
+                String.class, String.class, String.class, Integer.class, String.class, String.class, Integer.class, String.class
         };
         DefaultTableModel model = new DefaultTableModel(n.data, n.columnNames){
             @Override
@@ -116,11 +116,11 @@ public class TableFilterDemo extends JPanel{
         JButton button = new JButton("Remove");
         button.addActionListener(new RemoveLineActionLister());
 
-        add(button);
         SpringUtilities.makeCompactGrid(form, 2, 2, 6, 6, 6, 6);
         add(form);
+        add(button);
 
-        JButton dialogButton = new JButton("Dialog");
+        JButton dialogButton = new JButton("Duplicate & Edit");
         dialogButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -173,7 +173,7 @@ public class TableFilterDemo extends JPanel{
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("TableFilterDemo");
+        JFrame frame = new JFrame("Table View");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
@@ -241,7 +241,7 @@ public class TableFilterDemo extends JPanel{
                DefaultTableModel model = (DefaultTableModel) table.getModel();
                model.setRowCount(0);
                try(BufferedReader br = new BufferedReader(
-                       new FileReader(new File(this.getClass().getResource("/data.csv").getFile()))
+                       new FileReader(new File(this.getClass().getResource("/cars.csv").toURI()))
                )){
                    String line;
                    while((line = br.readLine()) != null){
@@ -257,7 +257,7 @@ public class TableFilterDemo extends JPanel{
                    }
                }catch(FileNotFoundException ex){
                    JOptionPane.showMessageDialog(null, "Issue with loading file: " + ex.getMessage());
-               }catch(IOException ex){
+               }catch(Exception ex){
                    JOptionPane.showMessageDialog(null, "Issue with loading file: " + ex.getMessage());
                    ex.printStackTrace();
                }

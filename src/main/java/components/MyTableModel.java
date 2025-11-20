@@ -4,22 +4,21 @@ import javax.swing.table.AbstractTableModel;
 
 class MyTableModel extends AbstractTableModel {
     private final TableFilterDemo tableFilterDemo;
-    public String[] columnNames = {"First Name",
-            "Last Name",
-            "Sport",
-            "# of Years",
-            "Vegetarian"};
+    public String[] columnNames = {"CarType",
+            "Make",
+            "Model",
+            "Year",
+            "MinimumVersion",
+            "EngineType",
+            "Power",
+            "EngineVersion"};
     public Object[][] data = {
-            {"Kathy", "Smith",
-                    "Snowboarding", 5, false},
-            {"John", "Doe",
-                    "Rowing", 3, true},
-            {"Sue", "Black",
-                    "Knitting", 2, false},
-            {"Jane", "White",
-                    "Speed reading", 20, true},
-            {"Joe", "Brown",
-                    "Pool", 10, false}
+            {"RegularCar","Honda","Civic",2020,"v2.0","RegularCarEngine",20,"v3.0"},
+            {"RegularCar","Toyota","Camry",2020,"v3.0","RegularCarEngine",30,"v4.0"},
+            {"RegularCar","Ford","Mustang",2010,"v3.0","RegularCarEngine",20,"v3.0"},
+            {"LuxurayCar","Ferrari","296GTS",2023,"v4.0","LuxuryCarEngine",40,"v5.0"},
+            {"LuxurayCar","Mercedes-Benz","Maybach S 580",2015,"v4.0","LuxuryCarEngine",40,"v5.0"},
+            {"RegularCar","Honda","Accord",2020,"v3.0","RegularCarEngine",30,"v3.0"}
     };
 
     public MyTableModel(TableFilterDemo tableFilterDemo) {
